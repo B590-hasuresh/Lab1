@@ -1,18 +1,20 @@
 package com.example.lab1
 
-import Question
 import android.os.Bundle
-import android.widget.Button
 import android.view.View
-import android.widget.Toast
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
+import Question
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.lab1.databinding.ActivityMainBinding
-import androidx.appcompat.app.AppCompatActivity as AppCompatActivity1
 
 
-class MainActivity : AppCompatActivity1() {
+class MainActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityMainBinding
-
 
     private val questionBank = listOf(
         Question(R.string.question_australia, true),
@@ -32,14 +34,21 @@ class MainActivity : AppCompatActivity1() {
         setContentView(binding.root)
 
 
+
         binding.trueButton.setOnClickListener {
+                view: View ->
             checkAnswer(true)
         }
         binding.falseButton.setOnClickListener {
+                view: View ->
             checkAnswer(false)
         }
         binding.nextButton.setOnClickListener {
             currentIndex = (currentIndex + 1) % questionBank.size
+            updateQuestion()
+        }
+        binding.previousButton.setOnClickListener {
+            currentIndex = (currentIndex - 1) % questionBank.size
             updateQuestion()
         }
         binding.questionTextView.setOnClickListener {
@@ -47,13 +56,15 @@ class MainActivity : AppCompatActivity1() {
             updateQuestion()
         }
 
-        updateQuestion()
 
+        updateQuestion()
     }
+
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
         binding.questionTextView.setText(questionTextResId)
     }
+
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = questionBank[currentIndex].answer
 
@@ -65,5 +76,4 @@ class MainActivity : AppCompatActivity1() {
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
     }
-
 }
