@@ -1,11 +1,14 @@
 package com.example.lab1
 
 import android.os.Bundle
+import android.widget.Button
+import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity as AppCompatActivity1
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity1() {
 
     private lateinit var trueButton: Button
     private lateinit var falseButton: Button
@@ -19,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         falseButton = findViewById(R.id.false_button)
 
         trueButton.setOnClickListener {
-                view: View ->
+            view: View ->
             Toast.makeText(
                 this,
                 R.string.correct_toast,
