@@ -13,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity as AppCompatActivity1
 private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity1() {
     private lateinit var binding: ActivityMainBinding
+    private var answeredQuestions = mutableSetOf<Int>()
+
+
+
 
 
     private val questionBank = listOf(
@@ -76,17 +80,35 @@ class MainActivity : AppCompatActivity1() {
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
         binding.questionTextView.setText(questionTextResId)
-    }
-    private fun checkAnswer(userAnswer: Boolean) {
-        val correctAnswer = questionBank[currentIndex].answer
 
+        // Enable or disable buttons based on whether the question has been answered
+        val alreadyAnswered = currentIndex in answeredQuestions
+        binding.trueButton.isEnabled = !alreadyAnswered
+        binding.falseButton.isEnabled = !alreadyAnswered
+    }
+
+    // Check user's answer and disable buttons to prevent multiple submissions
+    private fun checkAnswer(userAnswer: Boolean) {
+        // Prevent re-answering the same question
+        if (currentIndex in answeredQuestions) return
+
+        val correctAnswer = questionBank[currentIndex].answer
         val messageResId = if (userAnswer == correctAnswer) {
             R.string.correct_toast
         } else {
             R.string.incorrect_toast
         }
 
+        // Show toast message
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
+
+        // Mark question as answered
+        answeredQuestions.add(currentIndex)
+
+        // Disable buttons after answering
+        binding.trueButton.isEnabled = false
+        binding.falseButton.isEnabled = false
     }
+
 
 }
