@@ -2,6 +2,7 @@ package com.example.lab1
 
 import Question
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.view.View
 import android.widget.Toast
@@ -9,7 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import com.example.lab1.databinding.ActivityMainBinding
 import androidx.appcompat.app.AppCompatActivity as AppCompatActivity1
 
-
+private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity1() {
     private lateinit var binding: ActivityMainBinding
 
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity1() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate(Bundle?) called")
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -45,6 +47,31 @@ class MainActivity : AppCompatActivity1() {
 
         updateQuestion()
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart() called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume() called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause() called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop() called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy() called")
     }
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
