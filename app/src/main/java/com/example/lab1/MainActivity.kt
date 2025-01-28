@@ -14,7 +14,7 @@ private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity1() {
     private lateinit var binding: ActivityMainBinding
     private var answeredQuestions = mutableSetOf<Int>()
-
+    private var correctAnswers = 0
 
 
 
@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity1() {
         super.onDestroy()
         Log.d(TAG, "onDestroy() called")
     }
+    // Update the displayed question and re-enable buttons if necessary
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
         binding.questionTextView.setText(questionTextResId)
@@ -94,6 +95,7 @@ class MainActivity : AppCompatActivity1() {
 
         val correctAnswer = questionBank[currentIndex].answer
         val messageResId = if (userAnswer == correctAnswer) {
+            correctAnswers++ // Increment correct answers count
             R.string.correct_toast
         } else {
             R.string.incorrect_toast
@@ -108,7 +110,18 @@ class MainActivity : AppCompatActivity1() {
         // Disable buttons after answering
         binding.trueButton.isEnabled = false
         binding.falseButton.isEnabled = false
+
+        // Check if all questions have been answered
+        if (answeredQuestions.size == questionBank.size) {
+            showScore()
+        }
     }
 
-
+    private fun showScore() {
+        val scorePercentage = (correctAnswers.toDouble() / questionBank.size) * 100
+        Toast.makeText(this, "Quiz Completed! Your score: $scorePercentage%", Toast.LENGTH_LONG).show()
+    }
 }
+
+
+
