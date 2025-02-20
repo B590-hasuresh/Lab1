@@ -12,6 +12,8 @@ import com.example.lab1.databinding.ActivityCheatBinding
 
 // Constants for the ViewModel
 private const val ANSWER_SHOWN_KEY = "ANSWER_SHOWN_KEY"
+const val EXTRA_QUESTION_INDEX = "com.example.lab1.question_index"
+
 
 // ViewModel for CheatActivity
 class CheatViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
@@ -27,13 +29,14 @@ class CheatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCheatBinding
     private var answerIsTrue = false
     private val cheatViewModel: CheatViewModel by viewModels()
-
+    private var questionIndex = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCheatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         answerIsTrue = intent.getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false)
+        questionIndex = intent.getIntExtra(EXTRA_QUESTION_INDEX, 0)
 
         // If answer was previously shown, restore the UI state
         if (cheatViewModel.answerShown) {
@@ -45,6 +48,9 @@ class CheatActivity : AppCompatActivity() {
             showAnswer()
         }
     }
+
+
+
 
     private fun showAnswer() {
         val answerText = when {
@@ -58,15 +64,22 @@ class CheatActivity : AppCompatActivity() {
     private fun setAnswerShownResult(isAnswerShown: Boolean) {
         val data = Intent().apply {
             putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown)
+            putExtra(EXTRA_QUESTION_INDEX, questionIndex)
         }
         setResult(Activity.RESULT_OK, data)
     }
 
     companion object {
-        fun newIntent(packageContext: Context, answerIsTrue: Boolean): Intent {
+        fun newIntent(
+            packageContext: Context,
+            answerIsTrue: Boolean,
+            questionIndex: Int
+        ): Intent {
             return Intent(packageContext, CheatActivity::class.java).apply {
                 putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue)
+                putExtra(EXTRA_QUESTION_INDEX, questionIndex)
             }
         }
     }
+
 }

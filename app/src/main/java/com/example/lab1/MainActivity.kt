@@ -18,11 +18,17 @@ class MainActivity : AppCompatActivity1() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            quizViewModel.isCheater =
-                result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+            // Did the user see the answer?
+            val cheated = result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+            if (cheated) {
+                val cheatedIndex = result.data?.getIntExtra(EXTRA_QUESTION_INDEX, -1) ?: -1
+                if (cheatedIndex >= 0) {
+                    quizViewModel.setQuestionCheated(cheatedIndex)
+                }
+            }
         }
-
     }
+
 
 
 
@@ -49,10 +55,11 @@ class MainActivity : AppCompatActivity1() {
         }
         binding.cheatButton.setOnClickListener {
             val answerIsTrue = quizViewModel.currentQuestionAnswer
-            val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+            val index = quizViewModel.getCurrentIndex()
+            val intent = CheatActivity.newIntent(this, answerIsTrue, index)
             cheatLauncher.launch(intent)
-
         }
+
 
         updateQuestion()
 
@@ -88,15 +95,19 @@ class MainActivity : AppCompatActivity1() {
     }
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = quizViewModel.currentQuestionAnswer
+        val currentIndex = quizViewModel.getCurrentIndex()
 
         val messageResId = when {
-            quizViewModel.isCheater -> R.string.judgment_toast
-            userAnswer == correctAnswer -> R.string.correct_toast
-            else -> R.string.incorrect_toast
+            quizViewModel.isQuestionCheated(currentIndex) ->
+                R.string.judgment_toast  // Only show judgment if user cheated on THIS question
+            userAnswer == correctAnswer ->
+                R.string.correct_toast
+            else ->
+                R.string.incorrect_toast
         }
-
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
     }
+
 
 }
