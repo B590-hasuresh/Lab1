@@ -1,6 +1,5 @@
 package com.example.lab1
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -9,12 +8,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.example.lab1.databinding.ActivityMainBinding
 import androidx.appcompat.app.AppCompatActivity as AppCompatActivity1
-
+private const val REQUEST_CODE_CHEAT = 0
 private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity1() {
     private lateinit var binding: ActivityMainBinding
-
     private val quizViewModel: QuizViewModel by viewModels()
+
     private val cheatLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
