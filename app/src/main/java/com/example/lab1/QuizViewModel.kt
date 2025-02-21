@@ -5,13 +5,22 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
+/** Tag for logging */
 private const val TAG = "QuizViewModel"
+
+/** Key for storing current index in SavedStateHandle */
 private const val CURRENT_INDEX_KEY = "CURRENT_INDEX_KEY"
+
+/** Key for storing cheated questions array in SavedStateHandle */
 private const val CHEATED_ARRAY_KEY = "CHEATED_ARRAY_KEY"
 
+/**
+ * ViewModel that manages the quiz state and business logic
+ * @property savedStateHandle Handle for saving and retrieving activity state
+ */
 class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    // The question bank
+    /** List of all questions in the quiz */
     private val questionBank = listOf(
         Question(R.string.question_australia, true),
         Question(R.string.question_oceans, true),
@@ -21,41 +30,59 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         Question(R.string.question_asia, true)
     )
 
-    // Keep track of the current index in SavedStateHandle
+    /**
+     * Current index in the question bank
+     * Stored in SavedStateHandle to persist across configuration changes
+     */
     private var _currentIndex: Int
         get() = savedStateHandle.get(CURRENT_INDEX_KEY) ?: 0
         set(value) = savedStateHandle.set(CURRENT_INDEX_KEY, value)
 
-    // Keep track of cheated questions in SavedStateHandle as a BooleanArray
-    // If there's nothing saved yet, default to a new array sized to questionBank.size
+    /**
+     * Array tracking which questions have been cheated on
+     * Stored in SavedStateHandle to persist across configuration changes
+     */
     private var cheatedArray: BooleanArray
         get() = savedStateHandle.get<BooleanArray>(CHEATED_ARRAY_KEY)
             ?: BooleanArray(questionBank.size) { false }
         set(value) = savedStateHandle.set(CHEATED_ARRAY_KEY, value)
 
-    // Public read-only access to the current question’s data
+    /** The correct answer for the current question */
     val currentQuestionAnswer: Boolean
         get() = questionBank[_currentIndex].answer
 
+    /** The resource ID for the current question's text */
     val currentQuestionText: Int
         get() = questionBank[_currentIndex].textResId
 
-    // Moves to the next question (wrap around with modulo)
+    /**
+     * Advances to the next question, wrapping around to the beginning if necessary
+     */
     fun moveToNext() {
         _currentIndex = (_currentIndex + 1) % questionBank.size
     }
 
-    // Expose current index to other classes if needed
+    /**
+     * Gets the current question index
+     * @return The current index in the question bank
+     */
     fun getCurrentIndex(): Int = _currentIndex
 
-    // Mark a question as cheated
+    /**
+     * Marks a specific question as cheated
+     * @param index The index of the question that was cheated on
+     */
     fun setQuestionCheated(index: Int) {
-        val updatedArray = cheatedArray.clone()    // or cheatedArray.copyOf()
+        val updatedArray = cheatedArray.clone()
         updatedArray[index] = true
         cheatedArray = updatedArray
     }
 
-    // Check if a particular question was cheated on
+    /**
+     * Checks if a specific question was cheated on
+     * @param index The index of the question to check
+     * @return True if the question was cheated on, false otherwise
+     */
     fun isQuestionCheated(index: Int): Boolean {
         return cheatedArray.getOrNull(index) ?: false
     }
